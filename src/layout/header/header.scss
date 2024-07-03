@@ -1,7 +1,7 @@
 .header {
   display: grid;
   grid-auto-flow: column;
-  padding: clamp(20px, 3vw, 40px) clamp(20px, 4.2vw, 64px);
+  padding: clamp(20px, 3vw, 40px) clamp(20px, 4.2vw, 64px) 20px;
   justify-content: space-between;
   color: var(--text-color);
   overflow: hidden;

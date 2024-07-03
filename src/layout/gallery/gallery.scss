@@ -1,0 +1,71 @@
+.gallery {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: 1fr auto;
+
+  &-content {
+    overflow: hidden;
+    position: relative;
+    display: grid;
+
+    #overflow {
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      touch-action: none;
+    }
+
+    .button {
+      position: absolute;
+      z-index: 10;
+      padding: 30px;
+      align-self: center;
+
+      &:first-child {
+        left: 0;
+      }
+      &:nth-child(2) {
+        right: 0;
+      }
+    }
+  }
+
+  &-actions {
+    display: grid;
+    grid-auto-flow: column;
+    justify-self: center;
+    gap: 25px;
+    padding: 1rem;
+
+    button {
+      width: clamp(120px, 15vw, 180px);
+      // background-color: #555658;
+      border: 1.5px solid;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      text-transform: capitalize;
+      font-family: inherit;
+      font-weight: 400;
+      height: 48px;
+      border-radius: 8px;
+
+      &:last-child {
+        background-color: transparent !important;
+        color: var(--stroke-color);
+      }
+    }
+  }
+
+  &-image {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    padding: 1rem;
+    justify-content: center;
+    align-content: start;
+    overflow-y: auto;
+    user-select: none;
+  }
+}
