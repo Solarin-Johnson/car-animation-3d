@@ -1,0 +1,43 @@
+.header {
+  display: grid;
+  grid-auto-flow: column;
+  padding: clamp(20px, 3vw, 40px) clamp(20px, 4.2vw, 64px);
+  justify-content: space-between;
+  color: var(--text-color);
+  overflow: hidden;
+  align-items: center;
+  text-transform: uppercase;
+  font-weight: 500;
+  .menu {
+    display: grid;
+    grid-auto-flow: column;
+    gap: clamp(40px, 2vw, 72px);
+    font-size: 16px;
+
+    span {
+      cursor: pointer;
+      transition: transform 0.2s;
+      user-select: none;
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+  .profile {
+    justify-self: end;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 10px;
+    align-items: center;
+    align-content: center;
+    height: 38px;
+    // align-content: ;
+
+    img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+    }
+  }
+}
