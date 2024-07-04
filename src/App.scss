@@ -8,9 +8,13 @@ body {
   background-color: var(--bg-color);
   font-family: "Poppins", sans-serif;
   margin: 0;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 .container {
   display: grid;
   height: 100dvh;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto;
 }

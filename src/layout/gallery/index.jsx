@@ -1,27 +1,80 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./gallery.scss";
 import { useSpring, animated, easings } from "@react-spring/web";
+import BezierEasing from "bezier-easing";
 import { useDrag } from "@use-gesture/react";
 import Button from "../../components/buttons";
+import ford from "../../assets/ford.png";
+import audi from "../../assets/audi.png";
+import lexus from "../../assets/lexus.png";
+
+import fordTyre from "../../assets/ford-tyre.png";
+import audiTyre from "../../assets/audi-tyre.png";
+import lexusTyre from "../../assets/lexus-tyre.png";
 
 const sections = [
   {
-    title: "Title 1",
-    image: "https://via.placeholder.com/150",
+    // title: "Title 1",
+    image: ford,
+    name: { top: "Ford", bottom: "Mustang" },
+    tyre: fordTyre,
+    cord: { left: "12.7%", top: "clamp(0px, 39.5%, 190px)", right: "14.5%" },
   },
   {
-    title: "Title 2",
-    image: "https://via.placeholder.com/150",
+    // title: "Title 2",
+    image: audi,
+    name: { top: "Audi", bottom: "A3" },
+    tyre: audiTyre,
+    cord: { left: "13.9%", top: "clamp(0px, 42.2%, 203px)", right: "10.4%" },
   },
   {
-    title: "Title 3",
-    image: "https://via.placeholder.com/150",
+    // title: "Title 3",
+    image: lexus,
+    name: { top: "Lexus", bottom: "LC Series" },
+    tyre: lexusTyre,
+    cord: {
+      left: "13%",
+      top: "clamp(0px, 35%, 170px)",
+      right: "13.3%",
+      height: "clamp(20px, 14.8vw, 175px)",
+    },
+  },
+  {
+    // title: "Title 1",
+    image: ford,
+    name: { top: "Ford", bottom: "Mustang" },
+    tyre: fordTyre,
+    cord: { left: "12.7%", top: "clamp(0px, 39.5%, 190px)", right: "14.5%" },
+  },
+  {
+    // title: "Title 2",
+    image: audi,
+    name: { top: "Audi", bottom: "A3" },
+    tyre: audiTyre,
+    cord: { left: "13.9%", top: "clamp(0px, 42.2%, 203px)", right: "10.4%" },
+  },
+  {
+    // title: "Title 3",
+    image: lexus,
+    name: { top: "Lexus", bottom: "LC Series" },
+    tyre: lexusTyre,
+    cord: {
+      left: "13%",
+      top: "clamp(0px, 35%, 170px)",
+      right: "13.3%",
+      height: "clamp(20px, 14.8vw, 175px)",
+    },
   },
 ];
+const values = Array.from({ length: sections.length }, (_, index) => index);
+// const customEasing = BezierEasing(1.0, -0.13, 0.675, 1.1);
+const customEasing = BezierEasing(1.0, -0.135, 0.01, 1.065);
+
 export default function Gallery() {
   const contentRef = useRef(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const index = useRef(0);
+  const [currentSection, setCurrentSection] = useState(0);
   const [{ x }, api] = useSpring(() => ({ x: 0, config: { duration: 1000 } }));
 
   const animateToSection = async (sectionIndex) => {
@@ -29,7 +82,7 @@ export default function Gallery() {
     const multi = sectionIndex * sectionWidth;
     const currentX = x.get();
     const direction = currentX > -multi ? 1 : -1;
-    const targetX = -multi - direction * 10;
+    const targetX = -multi - direction * 0.01 * windowWidth;
 
     api.start({
       x:
@@ -43,13 +96,14 @@ export default function Gallery() {
             sectionIndex >= sections.length
               ? -((sections.length - 1) * sectionWidth)
               : -multi,
-          config: { tension: 400, friction: 50 },
+          config: { tension: 100, friction: 20 },
         });
       },
     });
 
-    index.current =
-      sectionIndex >= sections.length ? sections.length - 1 : sectionIndex;
+    setCurrentSection(
+      sectionIndex >= sections.length ? sections.length - 1 : sectionIndex
+    );
   };
 
   const NavigateToSection = async (sectionIndex) => {
@@ -57,51 +111,50 @@ export default function Gallery() {
     const multi = sectionIndex * sectionWidth;
     const currentX = x.get();
     const direction = currentX > -multi ? 1 : -1;
-    const targetX = -multi - direction * 10;
+    const targetX = -multi - direction * 0.01 * windowWidth;
 
     api.start({
-      x: currentX + direction * 10, // Example stretch distance based on direction
-      config: { tension: 350, friction: 50 },
-      onRest: () => {
-        api.start({
-          x: targetX,
-          config: { tension: 250, friction: 40 },
-          onRest: () => {
-            api.start({
-              x: -multi,
-              config: { tension: 400, friction: 50 },
-            });
-          },
-        });
+      x: -multi,
+      config: {
+        duration: 2000,
+        easing: (t) => customEasing(t),
       },
     });
 
-    index.current = sectionIndex;
+    setCurrentSection(sectionIndex);
   };
 
-  console.log(index.current);
-
-  const bind = useDrag(({ active, movement: [mx], memo = x.get() }) => {
-    if (active) {
-      // While dragging
-      api.start({ x: memo + mx, immediate: true });
-    } else {
-      // On release, snap to the nearest section
-      const nextIndex = Math.round(Math.abs(memo + mx) / windowWidth);
-      animateToSection(nextIndex);
+  const bind = useDrag(
+    ({ active, movement: [mx], memo = x.get(), cancel }) => {
+      if (active) {
+        // While dragging
+        api.start({ x: memo + mx, immediate: true });
+        if (Math.abs(mx) > window.innerWidth / 2) {
+          cancel();
+          const nextIndex = Math.round(Math.abs(memo + mx) / windowWidth);
+          animateToSection(nextIndex);
+        }
+      } else {
+        const nextIndex = Math.round(Math.abs(memo + mx) / windowWidth);
+        animateToSection(nextIndex);
+      }
+      return memo;
+    },
+    {
+      axis: "x",
+      filterTaps: true, // Ensure taps are not interpreted as drags
     }
-    return memo;
-  });
+  );
 
   // Function to handle "Next" button click
   const handleNext = () => {
-    const nextIndex = index.current + 1;
+    const nextIndex = currentSection + 1;
     if (nextIndex < sections.length) {
       NavigateToSection(nextIndex);
     }
   };
   const handlePrev = () => {
-    const nextIndex = index.current - 1;
+    const nextIndex = currentSection - 1;
     if (nextIndex >= 0) {
       NavigateToSection(nextIndex);
     }
@@ -110,7 +163,7 @@ export default function Gallery() {
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      animateToSection(index.current);
+      animateToSection(currentSection);
     };
     handleResize();
 
@@ -120,13 +173,27 @@ export default function Gallery() {
     };
   }, []);
 
+  useEffect(() => {
+    // setCurrentSection();
+  }, [index]);
+
   return (
     <div className="gallery">
       <div className="gallery-content" ref={contentRef}>
         {/* {sections.map((item, index) => (
         ))} */}
-        <Button onClick={handlePrev} title={"Prev"} />
-        <Button onClick={handleNext} title={"Next"} />
+        <GalleryNames x={x} windowWidth={windowWidth} />
+        <Button
+          onClick={handlePrev}
+          title={"Prev"}
+          left
+          fade={currentSection <= 0}
+        />
+        <Button
+          onClick={handleNext}
+          title={"Next"}
+          fade={currentSection > sections.length - 2}
+        />
         <animated.div
           {...bind()}
           id="overflow"
@@ -136,7 +203,13 @@ export default function Gallery() {
           }}
         >
           {sections.map((section, idx) => (
-            <GalleryImage key={idx} idx={idx} item={section} x={x} />
+            <GalleryImage
+              key={idx}
+              idx={idx}
+              item={section}
+              x={x}
+              windowWidth={windowWidth}
+            />
           ))}
         </animated.div>
       </div>
@@ -146,14 +219,8 @@ export default function Gallery() {
 }
 
 const GalleryActions = ({ x, windowWidth }) => {
-  const values = Array.from({ length: sections.length }, (_, index) => index);
-  const colors = ["#78000D", "#5B5B5F", "#314559"];
   const size = values.map((num) => num * -windowWidth).sort((a, b) => a - b);
-  console.log(
-    "values",
-    values.map((num) => num * -windowWidth),
-    colors
-  );
+  const colors = ["#78000D", "#5B5B5F", "#314559"];
   const interpolatedColor = x.interpolate(size, colors);
 
   return (
@@ -177,30 +244,105 @@ const GalleryActions = ({ x, windowWidth }) => {
   );
 };
 
-const GalleryImage = ({ item, idx, x }) => {
+const GalleryImage = ({ item, idx, x, windowWidth }) => {
+  const interpolatedRotate = x.to({
+    range: [(idx + 1) * -windowWidth, idx * -windowWidth],
+    output: [-270, 0],
+  });
   return (
     <animated.div
       key={idx}
       className="gallery-image"
-      style={{
-        background: idx % 2 === 0 ? "lightblue" : "lightcoral",
-        // transform: x.to((currentX) => {
-        //   const distance = Math.abs(idx * window.innerWidth - currentX);
-        //   const scale = 1 - Math.min(distance / window.innerWidth / 2, 0.5); // Scale down up to 50%
-        //   return `scale(${scale})`;
-        // }),
-      }}
+      // style={{
+      // background: idx % 2 === 0 ? "lightblue" : "lightcoral",
+      //   // transform: x.to((currentX) => {
+      //   //   const distance = Math.abs(idx * window.innerWidth - currentX);
+      //   //   const scale = 1 - Math.min(distance / window.innerWidth / 2, 0.5); // Scale down up to 50%
+      //   //   return `scale(${scale})`;
+      //   // }),
+      // }}
     >
-      {item.title}
-      {/* <img src={item.image} alt={item.title} /> */}
+      <div>
+        <img src={item.image} alt={item.title} />
+        <animated.img
+          src={item.tyre}
+          alt={item.title}
+          className="tyre"
+          style={{
+            left: item.cord.left,
+            top: item.cord.top,
+            height: item.cord.height,
+            transform: interpolatedRotate.to((value) => `rotate(${value}deg)`),
+          }}
+        />
+        <animated.img
+          src={item.tyre}
+          alt={item.title}
+          className="tyre right"
+          style={{
+            right: item.cord.right,
+            top: item.cord.top,
+            height: item.cord.height,
+            transform: interpolatedRotate.to(
+              (value) => `rotate(${value + 80}deg)`
+            ),
+          }}
+        />
+      </div>
     </animated.div>
   );
 };
 
-const GalleryNames = ({ data, index }) => {
+const GalleryNames = ({ index, x, windowWidth }) => {
+  const namesRef = useRef(null);
+  const [childHeight, setChildHeight] = useState(0);
+
+  useEffect(() => {
+    if (namesRef.current) {
+      setChildHeight(namesRef.current.clientHeight);
+    }
+  }, [namesRef]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setChildHeight(namesRef.current.clientHeight);
+    };
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const size = values.map((num) => num * -windowWidth).sort((a, b) => a - b);
+  const translate = values
+    .map((num) => num * -childHeight)
+    .sort((a, b) => a - b);
+
+  console.log("translate", translate);
+
+  const interpolatedTranslate = x.to({
+    range: size,
+    output: translate,
+  });
   return (
-    <div className="gallery-names">
-      <h3>Gallery</h3>
+    <div className="gallery-names-container">
+      <animated.div
+        className="gallery-names"
+        style={{
+          transform: interpolatedTranslate.to(
+            (value) => `translate3d(0,${value}px, 0)`
+          ),
+        }}
+      >
+        {sections.map((section, idx) => (
+          <div className="name" ref={namesRef}>
+            <div id="top">{section.name.top}</div>
+            <div id="bottom">{section.name.bottom}</div>
+          </div>
+        ))}
+      </animated.div>
     </div>
   );
 };

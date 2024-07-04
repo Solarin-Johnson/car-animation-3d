@@ -8,6 +8,9 @@
   align-items: center;
   text-transform: uppercase;
   font-weight: 500;
+  z-index: 100;
+  position: fixed;
+  width: calc(100vw - (2 * clamp(20px, 4.2vw, 64px)));
   .menu {
     display: grid;
     grid-auto-flow: column;

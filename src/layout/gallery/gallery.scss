@@ -1,9 +1,13 @@
 .gallery {
+  align-self: center;
   display: grid;
   grid-auto-flow: row;
   grid-template-rows: 1fr auto;
+  padding-top: calc(clamp(20px, 4.2vw, 64px) * 2 + 40px);
+  // background-color: red;
 
   &-content {
+    align-self: center;
     overflow: hidden;
     position: relative;
     display: grid;
@@ -11,20 +15,23 @@
     #overflow {
       height: 100%;
       display: grid;
+      align-items: center;
+      align-content: center;
       grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
       touch-action: none;
     }
 
     .button {
       position: absolute;
-      z-index: 10;
-      padding: 30px;
+      z-index: 100;
       align-self: center;
+      padding: calc(clamp(20px, 4.2vw, 64px) + 10px);
+      cursor: pointer;
 
       &:first-child {
         left: 0;
       }
-      &:nth-child(2) {
+      &:nth-child(3) {
         right: 0;
       }
     }
@@ -35,12 +42,12 @@
     grid-auto-flow: column;
     justify-self: center;
     gap: 25px;
-    padding: 1rem;
+    padding: 60px;
 
     button {
       width: clamp(120px, 15vw, 180px);
       // background-color: #555658;
-      border: 1.5px solid;
+      border: 2px solid;
       color: #fff;
       cursor: pointer;
       font-size: 1rem;
@@ -59,13 +66,74 @@
   }
 
   &-image {
+    justify-self: center;
     width: 100%;
     height: 100%;
     display: grid;
-    padding: 1rem;
     justify-content: center;
     align-content: start;
-    overflow-y: auto;
+    overflow: hidden;
     user-select: none;
+
+    > div {
+      position: relative;
+    }
+
+    img {
+      user-drag: none;
+      -webkit-user-drag: none;
+      margin-top: clamp(30px, 10vw, 150px);
+      // width: clamp(200px, 80vw, 940px);
+      height: clamp(100px, 30vw, 350px);
+    }
+
+    .tyre {
+      position: absolute;
+      z-index: 20;
+      height: clamp(20px, 12vw, 140px);
+      object-fit: cover;
+      // transform: rotate(10deg);
+      // left: 12%;
+      // top: clamp(0px, 39.5%, 190px);
+
+      &.right {
+        left: inherit;
+        right: 14.5%;
+      }
+    }
+  }
+  &-names {
+    &-container {
+      position: absolute;
+      justify-self: center;
+      align-self: start;
+      height: clamp(100px, 24vw, 312px);
+      top: 18px;
+      overflow: hidden;
+      display: grid;
+    }
+    text-align: center;
+    font-weight: 500;
+    color: rgba(51, 51, 51, 0.5);
+    // transform: translate3d(0, -10px, 0);
+    // display: grid;
+    // row-gap: 20px;
+    // grid-template-rows: repeat(3, 100%);
+    text-transform: uppercase;
+    align-items: center;
+    > div {
+      height: clamp(100px, 24vw, 312px);
+      display: grid;
+      align-content: start;
+      row-gap: 8px;
+    }
+    #top {
+      font-size: clamp(18px, 8vw, 64px);
+      line-height: 1.2;
+    }
+    #bottom {
+      line-height: 1;
+      font-size: clamp(28px, 12vw, 200px);
+    }
   }
 }
