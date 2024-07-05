@@ -1,16 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./gallery.scss";
-import { useSpring, animated, easings } from "@react-spring/web";
+import { useSpring, animated, easings, to } from "@react-spring/web";
 import BezierEasing from "bezier-easing";
 import { useDrag } from "@use-gesture/react";
 import Button from "../../components/buttons";
 import ford from "../../assets/ford.png";
 import audi from "../../assets/audi.png";
 import lexus from "../../assets/lexus.png";
+import bmw from "../../assets/bmw.png";
+import mercedes from "../../assets/mercedes.png";
 
 import fordTyre from "../../assets/ford-tyre.png";
 import audiTyre from "../../assets/audi-tyre.png";
 import lexusTyre from "../../assets/lexus-tyre.png";
+import bmwTyre from "../../assets/bmw-tyre.png";
+import mercedesTyre from "../../assets/mercedes-tyre.png";
 
 const sections = [
   {
@@ -28,7 +32,6 @@ const sections = [
     cord: { left: "13.9%", top: "clamp(0px, 42.2%, 203px)", right: "10.4%" },
   },
   {
-    // title: "Title 3",
     image: lexus,
     name: { top: "Lexus", bottom: "LC Series" },
     tyre: lexusTyre,
@@ -40,29 +43,32 @@ const sections = [
     },
   },
   {
-    // title: "Title 1",
-    image: ford,
-    name: { top: "Ford", bottom: "Mustang" },
-    tyre: fordTyre,
-    cord: { left: "12.7%", top: "clamp(0px, 39.5%, 190px)", right: "14.5%" },
-  },
-  {
-    // title: "Title 2",
-    image: audi,
-    name: { top: "Audi", bottom: "A3" },
-    tyre: audiTyre,
-    cord: { left: "13.9%", top: "clamp(0px, 42.2%, 203px)", right: "10.4%" },
-  },
-  {
-    // title: "Title 3",
-    image: lexus,
-    name: { top: "Lexus", bottom: "LC Series" },
-    tyre: lexusTyre,
+    image: bmw,
+    name: { top: "BMW", bottom: "M5 CS" },
+    tyre: bmwTyre,
     cord: {
-      left: "13%",
-      top: "clamp(0px, 35%, 170px)",
-      right: "13.3%",
-      height: "clamp(20px, 14.8vw, 175px)",
+      left: "4.2%",
+      top: "calc(clamp(0px, 33.5%, 160px) + clamp(0px, 12%, 100px)",
+      right: "11.7%",
+      height: "clamp(20px, 11.4vw, 135px)",
+    },
+    style: {
+      transform: "scale(1.15) translateY(clamp(0px, 15%, 150px)",
+    },
+  },
+  {
+    image: mercedes,
+    name: { top: "Mercedes", bottom: "GT 63 S" },
+    tyre: mercedesTyre,
+    cord: {
+      left: "-6.7%",
+      top: "calc(clamp(0px, 45%, 155px) + clamp(-25px, calc( 51% - 200px), 40px ))",
+      right: "6.5%",
+      height: "clamp(20px, 12.3vw, 140px)",
+    },
+    style: {
+      transform:
+        "scale(1.32) translateY(clamp(-20px, calc( 51% - 200px), 300px ))",
     },
   },
 ];
@@ -75,7 +81,11 @@ export default function Gallery() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const index = useRef(0);
   const [currentSection, setCurrentSection] = useState(0);
+  const [details, setDetails] = useState(false);
   const [{ x }, api] = useSpring(() => ({ x: 0, config: { duration: 1000 } }));
+  const [draw, detailsApi] = useSpring(() => ({
+    from: { x: 0, y: 0, scale: 1, scaleArrow: 1 },
+  }));
 
   const animateToSection = async (sectionIndex) => {
     const sectionWidth = window.innerWidth;
@@ -142,10 +152,31 @@ export default function Gallery() {
     },
     {
       axis: "x",
-      filterTaps: true, // Ensure taps are not interpreted as drags
+      filterTaps: false, // Ensure taps are not interpreted as drags
     }
   );
 
+  const openDetails = () => {
+    setDetails(true);
+    detailsApi.start({
+      x: 0,
+      y: -100,
+      scale: 0.7,
+      scaleArrow: 1.3,
+      config: { duration: 2000, easing: customEasing },
+    });
+  };
+
+  const closeDetails = () => {
+    setDetails(false);
+    detailsApi.start({
+      x: 0,
+      y: 0,
+      scale: 1,
+      scaleArrow: 1,
+      config: { duration: 2000, easing: customEasing },
+    });
+  };
   // Function to handle "Next" button click
   const handleNext = () => {
     const nextIndex = currentSection + 1;
@@ -182,46 +213,85 @@ export default function Gallery() {
       <div className="gallery-content" ref={contentRef}>
         {/* {sections.map((item, index) => (
         ))} */}
-        <GalleryNames x={x} windowWidth={windowWidth} />
         <Button
-          onClick={handlePrev}
+          onClick={details ? closeDetails : handlePrev}
           title={"Prev"}
           left
-          fade={currentSection <= 0}
+          fade={!details && currentSection <= 0}
+          style={{
+            transform: to(
+              [draw.x, draw.y, draw.scaleArrow],
+              (x, y, scale) =>
+                `translate3d(${x}px, calc(${y}vh + ${
+                  -y * 4.5
+                }px ), 0) scale(${scale})`
+            ),
+          }}
         />
         <Button
           onClick={handleNext}
           title={"Next"}
           fade={currentSection > sections.length - 2}
+          style={{
+            transform: to(
+              [draw.x, draw.y, draw.scaleArrow],
+              (x, y, scale) => `translate3d(${-y * 1.5}px, 0,0) scale(${scale})`
+            ),
+          }}
         />
         <animated.div
-          {...bind()}
-          id="overflow"
+          className="gallery-draw"
           style={{
-            width: `${sections.length * windowWidth}px`,
-            transform: x.to((x) => `translate3d(${x}px, 0, 0)`),
+            transform: to(
+              [draw.x, draw.y, draw.scale],
+              (x, y, scale) => `translate3d(0, ${y}px, 0) scale(${scale})`
+            ),
           }}
         >
-          {sections.map((section, idx) => (
-            <GalleryImage
-              key={idx}
-              idx={idx}
-              item={section}
-              x={x}
-              windowWidth={windowWidth}
-            />
-          ))}
+          <GalleryNames x={x} windowWidth={windowWidth} />
+          <animated.div
+            onClick={openDetails}
+            {...bind()}
+            id="overflow"
+            style={{
+              width: `${sections.length * windowWidth}px`,
+              transform: x.to((x) => `translate3d(${x}px, 0, 0)`),
+            }}
+          >
+            {sections.map((section, idx) => (
+              <GalleryImage
+                key={idx}
+                idx={idx}
+                item={section}
+                x={x}
+                windowWidth={windowWidth}
+              />
+            ))}
+          </animated.div>
         </animated.div>
       </div>
-      <GalleryActions x={x} windowWidth={windowWidth} />
+      <GalleryActions
+        x={x}
+        windowWidth={windowWidth}
+        openDetails={openDetails}
+      />
+      <GalleryIndicator x={x} windowWidth={windowWidth} />
     </div>
   );
 }
 
-const GalleryActions = ({ x, windowWidth }) => {
+const GalleryActions = ({ x, windowWidth, openDetails }) => {
   const size = values.map((num) => num * -windowWidth).sort((a, b) => a - b);
-  const colors = ["#78000D", "#5B5B5F", "#314559"];
+  const colors = [
+    "#707575",
+    "#273323",
+    "#78000D",
+    "#5B5B5F",
+    "#314559",
+    "#283749",
+  ];
   const interpolatedColor = x.interpolate(size, colors);
+  // const interpolatedIndicator = x.interpolate(size, colors);
 
   return (
     <div className="gallery-actions">
@@ -237,10 +307,47 @@ const GalleryActions = ({ x, windowWidth }) => {
         style={{
           borderColor: interpolatedColor,
         }}
+        onClick={openDetails}
       >
         Details
       </animated.button>
     </div>
+  );
+};
+
+const GalleryIndicator = ({ x, windowWidth }) => {
+  return (
+    <div className="gallery-indicator">
+      {sections.map((_, idx) => (
+        <GalleryIndicatorDot
+          key={idx}
+          idx={idx}
+          x={x}
+          windowWidth={windowWidth}
+        />
+      ))}
+    </div>
+  );
+};
+
+const GalleryIndicatorDot = ({ idx, x, windowWidth }) => {
+  const interpolatedColor = x.interpolate(
+    [
+      (idx - 1) * -windowWidth,
+      (idx + 1) * -windowWidth,
+      (idx + 2) * -windowWidth,
+      (idx - 2) * -windowWidth,
+      idx * -windowWidth,
+    ].sort((a, b) => a - b),
+    ["#00000050", "#00000050", "#545454", "#00000050", "#00000050"]
+  );
+  return (
+    <animated.span
+      style={{
+        backgroundColor: interpolatedColor,
+      }}
+      className="gallery-indicator-dot"
+    ></animated.span>
   );
 };
 
@@ -263,7 +370,7 @@ const GalleryImage = ({ item, idx, x, windowWidth }) => {
       // }}
     >
       <div>
-        <img src={item.image} alt={item.title} />
+        <img src={item.image} alt={item.title} style={{ ...item.style }} />
         <animated.img
           src={item.tyre}
           alt={item.title}

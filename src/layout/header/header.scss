@@ -44,3 +44,20 @@
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .header {
+    .menu {
+      display: none;
+    }
+    .profile {
+      :nth-child(2) {
+        display: none;
+      }
+      img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+}

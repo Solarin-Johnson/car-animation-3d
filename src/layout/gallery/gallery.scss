@@ -4,12 +4,16 @@
   grid-auto-flow: row;
   grid-template-rows: 1fr auto;
   padding-top: calc(clamp(20px, 4.2vw, 64px) * 2 + 40px);
-  // background-color: red;
-
-  &-content {
+  &-draw {
+    display: grid;
     align-self: center;
     overflow: hidden;
     position: relative;
+    // background-color: red;
+  }
+  &-content {
+    align-self: center;
+    overflow: hidden;
     display: grid;
 
     #overflow {
@@ -22,16 +26,18 @@
     }
 
     .button {
+      transition: 2s opacity ease-in-out;
       position: absolute;
       z-index: 100;
       align-self: center;
-      padding: calc(clamp(20px, 4.2vw, 64px) + 10px);
+      padding: 10px;
+      margin: 0 calc(clamp(10px, 6vw, 120px) - 20px);
       cursor: pointer;
 
-      &:first-child {
+      &.left {
         left: 0;
       }
-      &:nth-child(3) {
+      &.right {
         right: 0;
       }
     }
@@ -42,7 +48,8 @@
     grid-auto-flow: column;
     justify-self: center;
     gap: 25px;
-    padding: 60px;
+    padding: 10px;
+    padding-top: 45px;
 
     button {
       width: clamp(120px, 15vw, 180px);
@@ -134,6 +141,43 @@
     #bottom {
       line-height: 1;
       font-size: clamp(28px, 12vw, 200px);
+    }
+  }
+  &-indicator {
+    display: grid;
+    height: 20px;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    column-gap: clamp(6px, 1.2vw, 15px);
+    padding: 30px;
+
+    &-dot {
+      padding: clamp(4px, 0.8vw, 6px);
+      border-radius: 50%;
+      // background: #00000050;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .gallery {
+    row-gap: 5px;
+    &-image {
+      div {
+        margin: 30px 0 0;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .gallery {
+    &-image {
+      div {
+        margin: 60px 0 0;
+      }
     }
   }
 }
