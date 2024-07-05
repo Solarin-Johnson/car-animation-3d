@@ -76,7 +76,7 @@ const values = Array.from({ length: sections.length }, (_, index) => index);
 // const customEasing = BezierEasing(1.0, -0.13, 0.675, 1.1);
 const customEasing = BezierEasing(1.0, -0.135, 0.01, 1.065);
 
-export default function Gallery() {
+export default function Gallery({ detailsOpened }) {
   const contentRef = useRef(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const index = useRef(0);
@@ -136,23 +136,25 @@ export default function Gallery() {
 
   const bind = useDrag(
     ({ active, movement: [mx], memo = x.get(), cancel }) => {
-      if (active) {
-        // While dragging
-        api.start({ x: memo + mx, immediate: true });
-        if (Math.abs(mx) > window.innerWidth / 2) {
-          cancel();
+      if (!details) {
+        if (active) {
+          // While dragging
+          api.start({ x: memo + mx, immediate: true });
+          if (Math.abs(mx) > window.innerWidth / 2) {
+            cancel();
+            const nextIndex = Math.round(Math.abs(memo + mx) / windowWidth);
+            animateToSection(nextIndex);
+          }
+        } else {
           const nextIndex = Math.round(Math.abs(memo + mx) / windowWidth);
           animateToSection(nextIndex);
         }
-      } else {
-        const nextIndex = Math.round(Math.abs(memo + mx) / windowWidth);
-        animateToSection(nextIndex);
+        return memo;
       }
-      return memo;
     },
     {
       axis: "x",
-      filterTaps: false, // Ensure taps are not interpreted as drags
+      filterTaps: true, // Ensure taps are not interpreted as drags
     }
   );
 
@@ -161,7 +163,7 @@ export default function Gallery() {
     detailsApi.start({
       x: 0,
       y: -100,
-      scale: 0.7,
+      scale: 0.9,
       scaleArrow: 1.3,
       config: { duration: 2000, easing: customEasing },
     });
@@ -208,6 +210,9 @@ export default function Gallery() {
     // setCurrentSection();
   }, [index]);
 
+  useEffect(() => {
+    detailsOpened(details);
+  }, [details, detailsOpened]);
   return (
     <div className="gallery">
       <div className="gallery-content" ref={contentRef}>
@@ -222,9 +227,9 @@ export default function Gallery() {
             transform: to(
               [draw.x, draw.y, draw.scaleArrow],
               (x, y, scale) =>
-                `translate3d(${x}px, calc(${y}vh + ${
-                  -y * 4.5
-                }px ), 0) scale(${scale})`
+                `translate3d(${x}px, calc(${y * 1.1}px + ${
+                  y * 0.135
+                }vw ), 0) scale(${scale * 0.9})`
             ),
           }}
         />
@@ -235,7 +240,7 @@ export default function Gallery() {
           style={{
             transform: to(
               [draw.x, draw.y, draw.scaleArrow],
-              (x, y, scale) => `translate3d(${-y * 1.5}px, 0,0) scale(${scale})`
+              (x, y, scale) => `translate3d(${-y * 1}px, 0,0) scale(${scale})`
             ),
           }}
         />
@@ -244,7 +249,10 @@ export default function Gallery() {
           style={{
             transform: to(
               [draw.x, draw.y, draw.scale],
-              (x, y, scale) => `translate3d(0, ${y}px, 0) scale(${scale})`
+              (x, y, scale) =>
+                `translate3d(0, calc(${-y * 0.5}px + ${
+                  y * 0.23
+                }vh), 0) scale(${scale})`
             ),
           }}
         >
