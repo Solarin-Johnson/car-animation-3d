@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./gallery.scss";
 import { useSpring, animated, easings, to } from "@react-spring/web";
 import BezierEasing from "bezier-easing";
@@ -84,37 +84,45 @@ export default function Gallery({ detailsOpened }) {
   const [details, setDetails] = useState(false);
   const [{ x }, api] = useSpring(() => ({ x: 0, config: { duration: 1000 } }));
   const [draw, detailsApi] = useSpring(() => ({
-    from: { x: 0, y: 0, scale: 1, scaleArrow: 1 },
+    from: {
+      x: 0,
+      y: 0,
+      scale: windowWidth > 1560 ? 1.2 : 1,
+      scaleArrow: windowWidth > 1560 ? 1.6 : 1,
+    },
   }));
 
-  const animateToSection = async (sectionIndex) => {
-    const sectionWidth = window.innerWidth;
-    const multi = sectionIndex * sectionWidth;
-    const currentX = x.get();
-    const direction = currentX > -multi ? 1 : -1;
-    const targetX = -multi - direction * 0.01 * windowWidth;
+  const animateToSection = useCallback(
+    async (sectionIndex) => {
+      const sectionWidth = window.innerWidth;
+      const multi = sectionIndex * sectionWidth;
+      const currentX = x.get();
+      const direction = currentX > -multi ? 1 : -1;
+      const targetX = -multi - direction * 0.01 * windowWidth;
 
-    api.start({
-      x:
-        sectionIndex >= sections.length
-          ? -((sections.length - 1) * sectionWidth)
-          : targetX,
-      config: { tension: 250, friction: 40 }, // Bounce effect
-      onRest: () => {
-        api.start({
-          x:
-            sectionIndex >= sections.length
-              ? -((sections.length - 1) * sectionWidth)
-              : -multi,
-          config: { tension: 100, friction: 20 },
-        });
-      },
-    });
+      api.start({
+        x:
+          sectionIndex >= sections.length
+            ? -((sections.length - 1) * sectionWidth)
+            : targetX,
+        config: { tension: 250, friction: 40 }, // Bounce effect
+        onRest: () => {
+          api.start({
+            x:
+              sectionIndex >= sections.length
+                ? -((sections.length - 1) * sectionWidth)
+                : -multi,
+            config: { tension: 100, friction: 20 },
+          });
+        },
+      });
 
-    setCurrentSection(
-      sectionIndex >= sections.length ? sections.length - 1 : sectionIndex
-    );
-  };
+      setCurrentSection(
+        sectionIndex >= sections.length ? sections.length - 1 : sectionIndex
+      );
+    },
+    [api, x, windowWidth]
+  );
 
   const NavigateToSection = async (sectionIndex) => {
     const sectionWidth = window.innerWidth;
@@ -163,8 +171,8 @@ export default function Gallery({ detailsOpened }) {
     detailsApi.start({
       x: 0,
       y: -100,
-      scale: 0.9,
-      scaleArrow: 1.3,
+      scale: windowWidth > 1560 ? 1.1 : 0.9,
+      scaleArrow: windowWidth > 1560 ? 1.7 : 1.3,
       config: { duration: 2000, easing: customEasing },
     });
   };
@@ -174,8 +182,8 @@ export default function Gallery({ detailsOpened }) {
     detailsApi.start({
       x: 0,
       y: 0,
-      scale: 1,
-      scaleArrow: 1,
+      scale: windowWidth > 1560 ? 1.2 : 1,
+      scaleArrow: windowWidth > 1560 ? 1.6 : 1,
       config: { duration: 2000, easing: customEasing },
     });
   };
@@ -196,7 +204,17 @@ export default function Gallery({ detailsOpened }) {
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      animateToSection(currentSection);
+      if (!details) {
+        detailsApi.start({
+          scale: window.innerWidth > 1560 ? 1.1 : 0.9,
+          scaleArrow: window.innerWidth > 1560 ? 1.6 : 1,
+        });
+      } else {
+        detailsApi.start({
+          scale: window.innerWidth > 1560 ? 1.2 : 1,
+          scaleArrow: window.innerWidth > 1560 ? 1.7 : 1.3,
+        });
+      }
     };
     handleResize();
 
@@ -204,7 +222,7 @@ export default function Gallery({ detailsOpened }) {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [currentSection]);
 
   useEffect(() => {
     // setCurrentSection();
@@ -213,6 +231,14 @@ export default function Gallery({ detailsOpened }) {
   useEffect(() => {
     detailsOpened(details);
   }, [details, detailsOpened]);
+
+  useEffect(() => {
+    animateToSection(currentSection);
+    // closeDetails();
+  }, [windowWidth, animateToSection]);
+
+  console.log(currentSection);
+
   return (
     <div className="gallery">
       <div className="gallery-content" ref={contentRef}>
@@ -227,9 +253,9 @@ export default function Gallery({ detailsOpened }) {
             transform: to(
               [draw.x, draw.y, draw.scaleArrow],
               (x, y, scale) =>
-                `translate3d(${x}px, calc(${y * 1.1}px + ${
-                  y * 0.135
-                }vw ), 0) scale(${scale * 0.9})`
+                `translate3d(${x}px, clamp(-50vw, calc(${y * 1.7}px + ${
+                  y * 0.12
+                }vw), 0px), 0) scale(${scale * 0.9})`
             ),
           }}
         />
@@ -240,7 +266,7 @@ export default function Gallery({ detailsOpened }) {
           style={{
             transform: to(
               [draw.x, draw.y, draw.scaleArrow],
-              (x, y, scale) => `translate3d(${-y * 1}px, 0,0) scale(${scale})`
+              (x, y, scale) => `translate3d(${-y * 0.2}vw, 0,0) scale(${scale})`
             ),
           }}
         />
@@ -250,9 +276,9 @@ export default function Gallery({ detailsOpened }) {
             transform: to(
               [draw.x, draw.y, draw.scale],
               (x, y, scale) =>
-                `translate3d(0, calc(${-y * 0.5}px + ${
-                  y * 0.23
-                }vh), 0) scale(${scale})`
+                `translate3d(0, clamp(-10vw, calc(${-y * 0.3}px + ${
+                  y * 0.12
+                }vw), ${y * 2}px), 0) scale(${scale})`
             ),
           }}
         >
@@ -278,12 +304,22 @@ export default function Gallery({ detailsOpened }) {
           </animated.div>
         </animated.div>
       </div>
-      <GalleryActions
-        x={x}
-        windowWidth={windowWidth}
-        openDetails={openDetails}
-      />
-      <GalleryIndicator x={x} windowWidth={windowWidth} />
+      <animated.div
+        className={"gallery-nav"}
+        style={{
+          transform: to(
+            [draw.x, draw.y, draw.scale, draw.scaleArrow],
+            (x, y, scale, scaleArrow) => `translate3d(${x}px, ${-1.8 * y}px, 0)`
+          ),
+        }}
+      >
+        <GalleryActions
+          x={x}
+          windowWidth={windowWidth}
+          openDetails={openDetails}
+        />
+        <GalleryIndicator x={x} windowWidth={windowWidth} />
+      </animated.div>
     </div>
   );
 }
@@ -291,7 +327,7 @@ export default function Gallery({ detailsOpened }) {
 const GalleryActions = ({ x, windowWidth, openDetails }) => {
   const size = values.map((num) => num * -windowWidth).sort((a, b) => a - b);
   const colors = [
-    "#707575",
+    "#755138",
     "#273323",
     "#78000D",
     "#5B5B5F",
@@ -434,8 +470,6 @@ const GalleryNames = ({ index, x, windowWidth }) => {
   const translate = values
     .map((num) => num * -childHeight)
     .sort((a, b) => a - b);
-
-  console.log("translate", translate);
 
   const interpolatedTranslate = x.to({
     range: size,
