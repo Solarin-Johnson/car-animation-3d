@@ -31,7 +31,7 @@ export function BottomView({ details, index }) {
   useEffect(() => {
     const getColor = [...colors].reverse();
     console.log("color", getColor[index]);
-    setBtnColor(getColor[index]);
+    setBtnColor(getColor[index + 1]);
   }, [index]);
   return (
     <animated.div
