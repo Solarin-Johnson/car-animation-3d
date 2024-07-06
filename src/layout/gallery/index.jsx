@@ -73,9 +73,39 @@ const sections = [
     },
   },
 ];
+
+export const colors = [
+  "#755138",
+  "#273323",
+  "#78000D",
+  "#5B5B5F",
+  "#314559",
+  "#283749",
+];
 const values = Array.from({ length: sections.length }, (_, index) => index);
 // const customEasing = BezierEasing(1.0, -0.13, 0.675, 1.1);
 const customEasing = BezierEasing(1.0, -0.135, 0.01, 1.065);
+const initialView = (width) => ({
+  x: 0,
+  y: 0,
+  arrowY: 0,
+  opacity: 1,
+  scale: width > 1820 ? 1.2 : 1,
+  scaleCar: width > 1820 ? 1 : 1,
+  scaleArrow: width > 1820 ? 1.6 : 1,
+  config: { duration: 2000, easing: customEasing },
+});
+
+const shrinkView = (width) => ({
+  x: 0,
+  y: width < 1024 ? -40 : -100,
+  arrowY: -90,
+  opacity: 0,
+  scale: width > 1820 ? 1.1 : width <= 1024 ? 1 : 0.9,
+  scaleCar: width > 1820 ? 0.95 : width <= 1024 ? 0.9 : 0.8,
+  scaleArrow: width > 1820 ? 1.7 : 1.3,
+  config: { duration: 2000, easing: customEasing },
+});
 
 export default function Gallery({ detailsOpened }) {
   const contentRef = useRef(null);
@@ -88,8 +118,10 @@ export default function Gallery({ detailsOpened }) {
     from: {
       x: 0,
       y: 0,
+      arrowY: 0,
       opacity: 1,
       scale: windowWidth > 1820 ? 1.2 : 1,
+      scaleCar: windowWidth > 1820 ? 1 : 1,
       scaleArrow: windowWidth > 1820 ? 1.6 : 1,
     },
   }));
@@ -170,26 +202,12 @@ export default function Gallery({ detailsOpened }) {
 
   const openDetails = () => {
     setDetails(true);
-    detailsApi.start({
-      x: 0,
-      y: -100,
-      opacity: 0,
-      scale: windowWidth > 1820 ? 1.1 : 0.9,
-      scaleArrow: windowWidth > 1820 ? 1.7 : 1.3,
-      config: { duration: 2000, easing: customEasing },
-    });
+    detailsApi.start(initialView(windowWidth));
   };
 
   const closeDetails = () => {
     setDetails(false);
-    detailsApi.start({
-      x: 0,
-      y: 0,
-      opacity: 1,
-      scale: windowWidth > 1820 ? 1.2 : 1,
-      scaleArrow: windowWidth > 1820 ? 1.6 : 1,
-      config: { duration: 2000, easing: customEasing },
-    });
+    detailsApi.start(shrinkView(windowWidth));
   };
   // Function to handle "Next" button click
   const handleNext = () => {
@@ -209,15 +227,9 @@ export default function Gallery({ detailsOpened }) {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
       if (!details) {
-        detailsApi.start({
-          scale: window.innerWidth > 1820 ? 1.2 : 1,
-          scaleArrow: window.innerWidth > 1820 ? 1.6 : 1,
-        });
+        detailsApi.start(initialView(window.innerWidth));
       } else {
-        detailsApi.start({
-          scale: window.innerWidth > 1820 ? 1.1 : 0.9,
-          scaleArrow: window.innerWidth > 1820 ? 1.7 : 1.3,
-        });
+        detailsApi.start(shrinkView(window.innerWidth));
       }
     };
     handleResize();
@@ -256,9 +268,9 @@ export default function Gallery({ detailsOpened }) {
             fade={!details && currentSection <= 0}
             style={{
               transform: to(
-                [draw.x, draw.y, draw.scaleArrow],
+                [draw.x, draw.arrowY, draw.scaleArrow],
                 (x, y, scale) =>
-                  `translate3d(${x}px, clamp(-35vw, calc(${y * 1.7}px + ${
+                  `translate3d(${x}px, clamp(-45vw, calc(${y * 1.7}px + ${
                     y * 0.12
                   }vw), 0px), 0) scale(${scale * 0.9})`
               ),
@@ -270,7 +282,7 @@ export default function Gallery({ detailsOpened }) {
             fade={currentSection > sections.length - 2}
             style={{
               transform: to(
-                [draw.x, draw.y, draw.scaleArrow],
+                [draw.x, draw.arrowY, draw.scaleArrow],
                 (x, y, scale) =>
                   `translate3d(${-y * 0.2}vw, 0,0) scale(${scale})`
               ),
@@ -282,7 +294,7 @@ export default function Gallery({ detailsOpened }) {
               transform: to(
                 [draw.x, draw.y, draw.scale],
                 (x, y, scale) =>
-                  `translate3d(0, clamp(-10vw, calc(${-y * 0.3}px + ${
+                  `translate3d(0, clamp(-32%, calc(${-y * 0.3}px + ${
                     y * 0.12
                   }vw), ${y * 2}px), 0) scale(${scale})`
               ),
@@ -299,13 +311,19 @@ export default function Gallery({ detailsOpened }) {
               }}
             >
               {sections.map((section, idx) => (
-                <GalleryImage
-                  key={idx}
-                  idx={idx}
-                  item={section}
-                  x={x}
-                  windowWidth={windowWidth}
-                />
+                <animated.div
+                  style={{
+                    scale: to([draw.scaleCar], (scale) => scale),
+                  }}
+                >
+                  <GalleryImage
+                    key={idx}
+                    idx={idx}
+                    item={section}
+                    x={x}
+                    windowWidth={windowWidth}
+                  />
+                </animated.div>
               ))}
             </animated.div>
           </animated.div>
@@ -329,21 +347,14 @@ export default function Gallery({ detailsOpened }) {
           <GalleryIndicator x={x} windowWidth={windowWidth} />
         </animated.div>
       </div>
-      <BottomView details={details} />
+      <BottomView details={details} index={currentSection} />
     </>
   );
 }
 
 const GalleryActions = ({ x, windowWidth, openDetails }) => {
   const size = values.map((num) => num * -windowWidth).sort((a, b) => a - b);
-  const colors = [
-    "#755138",
-    "#273323",
-    "#78000D",
-    "#5B5B5F",
-    "#314559",
-    "#283749",
-  ];
+
   const interpolatedColor = x.interpolate(size, colors);
   // const interpolatedIndicator = x.interpolate(size, colors);
 

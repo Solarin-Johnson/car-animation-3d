@@ -7,13 +7,13 @@
   min-height: 700px;
   height: clamp(100vh, 850px, 1000px);
   // height: 100vh;
-  // background-color: green;
   position: relative;
   &-draw {
     display: grid;
     align-self: center;
     overflow: hidden;
     position: relative;
+    // background-color: green;
   }
   &-content {
     padding-top: calc(clamp(20px, 4.2vw, 92px) * 2 + 40px);
@@ -57,7 +57,7 @@
     justify-self: center;
     gap: 25px;
     padding: 10px;
-    padding-top: 45px;
+    // padding-top: 45px;
 
     button {
       width: clamp(120px, 15vw, 180px);
@@ -179,7 +179,7 @@
 @media screen and (max-width: 768px) {
   .gallery {
     row-gap: 10px;
-    min-height: 0px;
+    min-height: 600px;
     height: fit-content;
     margin-top: -50px;
 
@@ -210,6 +210,15 @@
     &-draw {
       // scale: 1.2;
       // margin-top: 5%;
+    }
+  }
+}
+
+@media screen and (min-height: 1000px) and (max-width: 1240px) {
+  .gallery {
+    &-content {
+      padding-top: calc(clamp(20px, 4.2vw, 92px) * 6);
+      transform: translateY(30px);
     }
   }
 }
