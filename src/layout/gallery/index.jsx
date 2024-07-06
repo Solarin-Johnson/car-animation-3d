@@ -15,6 +15,7 @@ import audiTyre from "../../assets/audi-tyre.png";
 import lexusTyre from "../../assets/lexus-tyre.png";
 import bmwTyre from "../../assets/bmw-tyre.png";
 import mercedesTyre from "../../assets/mercedes-tyre.png";
+import { BottomView } from "./spec";
 
 const sections = [
   {
@@ -87,8 +88,9 @@ export default function Gallery({ detailsOpened }) {
     from: {
       x: 0,
       y: 0,
-      scale: windowWidth > 1560 ? 1.2 : 1,
-      scaleArrow: windowWidth > 1560 ? 1.6 : 1,
+      opacity: 1,
+      scale: windowWidth > 1820 ? 1.2 : 1,
+      scaleArrow: windowWidth > 1820 ? 1.6 : 1,
     },
   }));
 
@@ -171,8 +173,9 @@ export default function Gallery({ detailsOpened }) {
     detailsApi.start({
       x: 0,
       y: -100,
-      scale: windowWidth > 1560 ? 1.1 : 0.9,
-      scaleArrow: windowWidth > 1560 ? 1.7 : 1.3,
+      opacity: 0,
+      scale: windowWidth > 1820 ? 1.1 : 0.9,
+      scaleArrow: windowWidth > 1820 ? 1.7 : 1.3,
       config: { duration: 2000, easing: customEasing },
     });
   };
@@ -182,8 +185,9 @@ export default function Gallery({ detailsOpened }) {
     detailsApi.start({
       x: 0,
       y: 0,
-      scale: windowWidth > 1560 ? 1.2 : 1,
-      scaleArrow: windowWidth > 1560 ? 1.6 : 1,
+      opacity: 1,
+      scale: windowWidth > 1820 ? 1.2 : 1,
+      scaleArrow: windowWidth > 1820 ? 1.6 : 1,
       config: { duration: 2000, easing: customEasing },
     });
   };
@@ -206,13 +210,13 @@ export default function Gallery({ detailsOpened }) {
       setWindowWidth(window.innerWidth);
       if (!details) {
         detailsApi.start({
-          scale: window.innerWidth > 1560 ? 1.1 : 0.9,
-          scaleArrow: window.innerWidth > 1560 ? 1.6 : 1,
+          scale: window.innerWidth > 1820 ? 1.2 : 1,
+          scaleArrow: window.innerWidth > 1820 ? 1.6 : 1,
         });
       } else {
         detailsApi.start({
-          scale: window.innerWidth > 1560 ? 1.2 : 1,
-          scaleArrow: window.innerWidth > 1560 ? 1.7 : 1.3,
+          scale: window.innerWidth > 1820 ? 1.1 : 0.9,
+          scaleArrow: window.innerWidth > 1820 ? 1.7 : 1.3,
         });
       }
     };
@@ -222,7 +226,7 @@ export default function Gallery({ detailsOpened }) {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [currentSection]);
+  }, [currentSection, details, detailsApi]);
 
   useEffect(() => {
     // setCurrentSection();
@@ -240,87 +244,93 @@ export default function Gallery({ detailsOpened }) {
   console.log(currentSection);
 
   return (
-    <div className="gallery">
-      <div className="gallery-content" ref={contentRef}>
-        {/* {sections.map((item, index) => (
+    <>
+      <div className="gallery">
+        <div className="gallery-content" ref={contentRef}>
+          {/* {sections.map((item, index) => (
         ))} */}
-        <Button
-          onClick={details ? closeDetails : handlePrev}
-          title={"Prev"}
-          left
-          fade={!details && currentSection <= 0}
-          style={{
-            transform: to(
-              [draw.x, draw.y, draw.scaleArrow],
-              (x, y, scale) =>
-                `translate3d(${x}px, clamp(-50vw, calc(${y * 1.7}px + ${
-                  y * 0.12
-                }vw), 0px), 0) scale(${scale * 0.9})`
-            ),
-          }}
-        />
-        <Button
-          onClick={handleNext}
-          title={"Next"}
-          fade={currentSection > sections.length - 2}
-          style={{
-            transform: to(
-              [draw.x, draw.y, draw.scaleArrow],
-              (x, y, scale) => `translate3d(${-y * 0.2}vw, 0,0) scale(${scale})`
-            ),
-          }}
-        />
-        <animated.div
-          className="gallery-draw"
-          style={{
-            transform: to(
-              [draw.x, draw.y, draw.scale],
-              (x, y, scale) =>
-                `translate3d(0, clamp(-10vw, calc(${-y * 0.3}px + ${
-                  y * 0.12
-                }vw), ${y * 2}px), 0) scale(${scale})`
-            ),
-          }}
-        >
-          <GalleryNames x={x} windowWidth={windowWidth} />
-          <animated.div
-            onClick={openDetails}
-            {...bind()}
-            id="overflow"
+          <Button
+            onClick={details ? closeDetails : handlePrev}
+            title={"Prev"}
+            left
+            fade={!details && currentSection <= 0}
             style={{
-              width: `${sections.length * windowWidth}px`,
-              transform: x.to((x) => `translate3d(${x}px, 0, 0)`),
+              transform: to(
+                [draw.x, draw.y, draw.scaleArrow],
+                (x, y, scale) =>
+                  `translate3d(${x}px, clamp(-35vw, calc(${y * 1.7}px + ${
+                    y * 0.12
+                  }vw), 0px), 0) scale(${scale * 0.9})`
+              ),
+            }}
+          />
+          <Button
+            onClick={handleNext}
+            title={"Next"}
+            fade={currentSection > sections.length - 2}
+            style={{
+              transform: to(
+                [draw.x, draw.y, draw.scaleArrow],
+                (x, y, scale) =>
+                  `translate3d(${-y * 0.2}vw, 0,0) scale(${scale})`
+              ),
+            }}
+          />
+          <animated.div
+            className="gallery-draw"
+            style={{
+              transform: to(
+                [draw.x, draw.y, draw.scale],
+                (x, y, scale) =>
+                  `translate3d(0, clamp(-10vw, calc(${-y * 0.3}px + ${
+                    y * 0.12
+                  }vw), ${y * 2}px), 0) scale(${scale})`
+              ),
             }}
           >
-            {sections.map((section, idx) => (
-              <GalleryImage
-                key={idx}
-                idx={idx}
-                item={section}
-                x={x}
-                windowWidth={windowWidth}
-              />
-            ))}
+            <GalleryNames x={x} windowWidth={windowWidth} />
+            <animated.div
+              onClick={openDetails}
+              {...bind()}
+              id="overflow"
+              style={{
+                width: `${sections.length * windowWidth}px`,
+                transform: x.to((x) => `translate3d(${x}px, 0, 0)`),
+              }}
+            >
+              {sections.map((section, idx) => (
+                <GalleryImage
+                  key={idx}
+                  idx={idx}
+                  item={section}
+                  x={x}
+                  windowWidth={windowWidth}
+                />
+              ))}
+            </animated.div>
           </animated.div>
+        </div>
+        <animated.div
+          className={"gallery-nav"}
+          style={{
+            transform: to(
+              [draw.x, draw.y, draw.scale, draw.scaleArrow],
+              (x, y, scale, scaleArrow) =>
+                `translate3d(${x}px, ${-1.8 * y}px, 0)`
+            ),
+            opacity: to([draw.opacity], (opacity) => opacity),
+          }}
+        >
+          <GalleryActions
+            x={x}
+            windowWidth={windowWidth}
+            openDetails={openDetails}
+          />
+          <GalleryIndicator x={x} windowWidth={windowWidth} />
         </animated.div>
       </div>
-      <animated.div
-        className={"gallery-nav"}
-        style={{
-          transform: to(
-            [draw.x, draw.y, draw.scale, draw.scaleArrow],
-            (x, y, scale, scaleArrow) => `translate3d(${x}px, ${-1.8 * y}px, 0)`
-          ),
-        }}
-      >
-        <GalleryActions
-          x={x}
-          windowWidth={windowWidth}
-          openDetails={openDetails}
-        />
-        <GalleryIndicator x={x} windowWidth={windowWidth} />
-      </animated.div>
-    </div>
+      <BottomView details={details} />
+    </>
   );
 }
 

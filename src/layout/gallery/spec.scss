@@ -1,0 +1,46 @@
+:root {
+  --view-image-width: clamp(200px, 20vw, 400px);
+}
+
+.view {
+  position: absolute;
+  z-index: 100;
+  width: 90vw;
+  min-height: fit-content;
+  height: 400px;
+  background-color: var(--bg-color);
+  //   background-color: red;
+  opacity: 0;
+  padding: 0 5vw;
+  //   top: 100vh;
+  align-self: last baseline;
+  top: 100%;
+  justify-self: center;
+  display: grid;
+  align-content: start;
+  text-transform: capitalize;
+  font-weight: 500;
+  color: var(--text-color);
+  gap: 20px;
+
+  .title {
+    font-size: clamp(16px, 1.5vw, 24px);
+  }
+
+  .body {
+    display: grid;
+    // grid-auto-flow: column;
+    row-gap: 10px;
+    column-gap: 24px;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(var(--view-image-width), 1fr)
+    );
+
+    img {
+      width: 100%;
+      // width: var(--view-image-width);
+      object-fit: contain;
+    }
+  }
+}

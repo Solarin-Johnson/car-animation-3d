@@ -4,7 +4,7 @@ import logo from "../../assets/logo.svg";
 import { animated, to, useSpring } from "@react-spring/web";
 import BezierEasing from "bezier-easing";
 
-const customEasing = BezierEasing(1.0, -0.135, 0.01, 1.065);
+export const customEasing = BezierEasing(1.0, -0.135, 0.01, 1.065);
 export default function Header({ details }) {
   const [draw, detailsApi] = useSpring(() => ({
     from: { x: 0, y: 0, scale: 1, scaleArrow: 1 },

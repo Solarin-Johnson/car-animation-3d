@@ -16,6 +16,17 @@ body {
 }
 .container {
   display: grid;
-  height: 100dvh;
+  // height: 120dvh;
+  max-height: 890px;
+  overflow: hidden;
+  // min-height: 750px;
   grid-template-rows: auto;
+  position: relative;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    min-height: 620px;
+    height: 100dvh;
+  }
 }
