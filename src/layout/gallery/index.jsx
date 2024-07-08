@@ -447,7 +447,7 @@ const GalleryImage = ({ item, idx, x, windowWidth }) => {
         <img src={item.image} alt={item.title} style={{ ...item.style }} />
         <animated.img
           src={item.tyre}
-          alt={item.title}
+          alt={item.title || "car image"}
           className="tyre"
           style={{
             left: item.cord.left,
@@ -458,7 +458,7 @@ const GalleryImage = ({ item, idx, x, windowWidth }) => {
         />
         <animated.img
           src={item.tyre}
-          alt={item.title}
+          alt={item.title || "car image"}
           className="tyre right"
           style={{
             right: item.cord.right,

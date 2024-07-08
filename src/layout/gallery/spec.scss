@@ -89,7 +89,7 @@
   padding: 10px;
   // background-color: red;
   justify-self: end;
-  right: clamp(5px, 1vw, 30px);
+  right: clamp(60px, 6vw, 200px);
   z-index: 200;
   top: calc(clamp(20px, 11vh, 140px));
   display: grid;
@@ -99,6 +99,7 @@
   font-weight: 400;
   color: #454545;
   transform: translateY(-50%) scale(0.9);
+  scale: 0.9;
   .body {
     display: grid;
     gap: 32px;
@@ -133,6 +134,7 @@
     // margin-top: calc(clamp(40px, 7%, 50px) * -1);
     // min-height: 500px;
     overflow-y: auto;
+    right: clamp(5px, 1vw, 30px);
     .title {
       padding-top: clamp(40px, 7%, 50px);
     }
@@ -151,7 +153,7 @@
   }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1024px) {
   .specs {
     .body {
       grid-template-columns: repeat(3, 1fr);

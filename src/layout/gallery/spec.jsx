@@ -90,12 +90,12 @@ export const RightView = ({ details, windowWidth }) => {
 
   useEffect(() => {
     api.start({
-      x: details ? 0 : windowWidth > 768 ? 200 : 0,
-      y: details ? 0 : windowWidth > 768 ? 0 : -40,
+      x: details ? 0 : windowWidth > 1024 ? 200 : 0,
+      y: details ? 0 : windowWidth > 1024 ? 0 : -40,
       opacity: details ? 1 : 0,
       delay: details ? 1000 : 0,
       config: {
-        duration: details ? 2000 : 1800,
+        duration: 2000,
         easing: (t) => customEasing(t),
       },
     });
