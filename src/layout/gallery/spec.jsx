@@ -1,14 +1,34 @@
 import { useEffect, useState } from "react";
 import "./spec.scss";
-import { animated, useSpring } from "@react-spring/web";
+import { animated, to, useSpring } from "@react-spring/web";
 import { customEasing } from "../header/header";
 import image1 from "../../assets/views/image01.png";
 import image2 from "../../assets/views/image02.png";
 import image3 from "../../assets/views/image03.png";
 import image4 from "../../assets/views/image04.png";
 import { colors } from "../gallery/index";
+import { ReactComponent as Fuel } from "../../assets/icons/fuel.svg";
+import { ReactComponent as Seat } from "../../assets/icons/seat.svg";
+import { ReactComponent as Engine } from "../../assets/icons/engine.svg";
 
 const viewSrc = [image1, image2, image3, image4];
+const specs = [
+  {
+    icon: Fuel,
+    value: "800km",
+    type: "Gas",
+  },
+  {
+    icon: Seat,
+    value: "4",
+    type: "Seats",
+  },
+  {
+    icon: Engine,
+    value: "335",
+    type: "Horse power",
+  },
+];
 
 export function BottomView({ details, index }) {
   const [btnColor, setBtnColor] = useState();
@@ -62,3 +82,46 @@ export function BottomView({ details, index }) {
     </animated.div>
   );
 }
+
+export const RightView = ({ details, windowWidth }) => {
+  const [draw, api] = useSpring(() => ({
+    from: { x: 200, y: 0, opacity: 0 },
+  }));
+
+  useEffect(() => {
+    api.start({
+      x: details ? 0 : windowWidth > 768 ? 200 : 0,
+      y: details ? 0 : windowWidth > 768 ? 0 : -40,
+      opacity: details ? 1 : 0,
+      delay: details ? 1000 : 0,
+      config: {
+        duration: details ? 2000 : 1800,
+        easing: (t) => customEasing(t),
+      },
+    });
+  }, [details, api, windowWidth]);
+
+  return (
+    <animated.div
+      style={{
+        transform: to(
+          [draw.x, draw.y],
+          (x, y) => `translate3d(calc(${x * 2.2}% - ${x}px), ${y}vw, 0)`
+        ),
+        opacity: draw.opacity,
+      }}
+      className="specs"
+    >
+      <div className="title">specs</div>
+      <div className="body">
+        {specs.map((spec, index) => (
+          <div key={index} className="spec">
+            <spec.icon />
+            <div className="value">{spec.value}</div>
+            <div className="type">{spec.type}</div>
+          </div>
+        ))}
+      </div>
+    </animated.div>
+  );
+};

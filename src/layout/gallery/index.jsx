@@ -15,7 +15,7 @@ import audiTyre from "../../assets/audi-tyre.png";
 import lexusTyre from "../../assets/lexus-tyre.png";
 import bmwTyre from "../../assets/bmw-tyre.png";
 import mercedesTyre from "../../assets/mercedes-tyre.png";
-import { BottomView } from "./spec";
+import { BottomView, RightView } from "./spec";
 
 const sections = [
   {
@@ -32,6 +32,42 @@ const sections = [
     tyre: audiTyre,
     cord: { left: "13.9%", top: "clamp(0px, 42.2%, 203px)", right: "10.4%" },
   },
+
+  {
+    image: bmw,
+    name: { top: "BMW", bottom: "M5 CS" },
+    tyre: bmwTyre,
+    cord: {
+      left: "4.2%",
+      top: "calc(clamp(0px, 33%, 150px) + clamp(0px, 10%, 100px)",
+      right: "11.7%",
+      height: "clamp(20px, 11.4vw, 135px)",
+    },
+    parentStyle: {
+      // paddingTop: "clamp(0px, calc(100px - 10vw), 50px)",
+    },
+    style: {
+      transform: "scale(1.15) translateY(clamp(0px, 10%, 150px)",
+    },
+  },
+  {
+    image: mercedes,
+    name: { top: "Mercedes", bottom: "GT 63 S" },
+    tyre: mercedesTyre,
+    cord: {
+      left: "-6.7%",
+      top: "calc(clamp(0px, 45%, 155px) + clamp(-36px, calc( 51% - 200px), 40px ))",
+      right: "6.5%",
+      height: "clamp(20px, 12.3vw, 140px)",
+    },
+    parentStyle: {
+      paddingTop: "clamp(0px, calc(100px - 10vw), 50px)",
+    },
+    style: {
+      transform:
+        "scale(1.32) translateY(clamp(-28px, calc( 51% - 200px), 300px ))",
+    },
+  },
   {
     image: lexus,
     name: { top: "Lexus", bottom: "LC Series" },
@@ -43,41 +79,12 @@ const sections = [
       height: "clamp(20px, 14.8vw, 175px)",
     },
   },
-  {
-    image: bmw,
-    name: { top: "BMW", bottom: "M5 CS" },
-    tyre: bmwTyre,
-    cord: {
-      left: "4.2%",
-      top: "calc(clamp(0px, 33.5%, 160px) + clamp(0px, 12%, 100px)",
-      right: "11.7%",
-      height: "clamp(20px, 11.4vw, 135px)",
-    },
-    style: {
-      transform: "scale(1.15) translateY(clamp(0px, 15%, 150px)",
-    },
-  },
-  {
-    image: mercedes,
-    name: { top: "Mercedes", bottom: "GT 63 S" },
-    tyre: mercedesTyre,
-    cord: {
-      left: "-6.7%",
-      top: "calc(clamp(0px, 45%, 155px) + clamp(-25px, calc( 51% - 200px), 40px ))",
-      right: "6.5%",
-      height: "clamp(20px, 12.3vw, 140px)",
-    },
-    style: {
-      transform:
-        "scale(1.32) translateY(clamp(-20px, calc( 51% - 200px), 300px ))",
-    },
-  },
 ];
 
 export const colors = [
-  "#755138",
-  "#273323",
   "#78000D",
+  "#4F616C",
+  "#273323",
   "#5B5B5F",
   "#314559",
   "#283749",
@@ -182,7 +189,7 @@ export default function Gallery({ detailsOpened }) {
         if (active) {
           // While dragging
           api.start({ x: memo + mx, immediate: true });
-          if (Math.abs(mx) > window.innerWidth / 2) {
+          if (Math.abs(mx) > window.innerWidth * 2) {
             cancel();
             const nextIndex = Math.round(Math.abs(memo + mx) / windowWidth);
             animateToSection(nextIndex);
@@ -202,12 +209,12 @@ export default function Gallery({ detailsOpened }) {
 
   const openDetails = () => {
     setDetails(true);
-    detailsApi.start(initialView(windowWidth));
+    // detailsApi.start(shrinkView(windowWidth));
   };
 
   const closeDetails = () => {
     setDetails(false);
-    detailsApi.start(shrinkView(windowWidth));
+    // detailsApi.start(shrinkView(windowWidth));
   };
   // Function to handle "Next" button click
   const handleNext = () => {
@@ -348,6 +355,7 @@ export default function Gallery({ detailsOpened }) {
         </animated.div>
       </div>
       <BottomView details={details} index={currentSection} />
+      <RightView details={details} windowWidth={windowWidth} />
     </>
   );
 }
@@ -425,6 +433,7 @@ const GalleryImage = ({ item, idx, x, windowWidth }) => {
     <animated.div
       key={idx}
       className="gallery-image"
+      style={{ ...item.parentStyle }}
       // style={{
       // background: idx % 2 === 0 ? "lightblue" : "lightcoral",
       //   // transform: x.to((currentX) => {
