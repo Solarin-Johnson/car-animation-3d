@@ -4,39 +4,40 @@ import { useSpring, animated, easings, to } from "@react-spring/web";
 import BezierEasing from "bezier-easing";
 import { useDrag } from "@use-gesture/react";
 import Button from "../../components/buttons";
-import ford from "../../assets/ford.png";
-import audi from "../../assets/audi.png";
-import lexus from "../../assets/lexus.png";
-import bmw from "../../assets/bmw.png";
-import mercedes from "../../assets/mercedes.png";
+// import ford from "../../assets/ford.png";
+// import audi from "../../assets/audi.png";
+// import lexus from "../../assets/lexus.png";
+// import bmw from "../../assets/bmw.png";
+// import mercedes from "../../assets/mercedes.png";
 
-import fordTyre from "../../assets/ford-tyre.png";
-import audiTyre from "../../assets/audi-tyre.png";
-import lexusTyre from "../../assets/lexus-tyre.png";
-import bmwTyre from "../../assets/bmw-tyre.png";
-import mercedesTyre from "../../assets/mercedes-tyre.png";
+// import fordTyre from "../../assets/ford-tyre.png";
+// import audiTyre from "../../assets/audi-tyre.png";
+// import lexusTyre from "../../assets/lexus-tyre.png";
+// import bmwTyre from "../../assets/bmw-tyre.png";
+// import mercedesTyre from "../../assets/mercedes-tyre.png";
 import { BottomView, RightView } from "./spec";
+import { publicImage } from "../../utils";
 
 const sections = [
   {
     // title: "Title 1",
-    image: ford,
+    image: publicImage("ford.png"),
     name: { top: "Ford", bottom: "Mustang" },
-    tyre: fordTyre,
+    tyre: publicImage("ford-tyre.png"),
     cord: { left: "12.7%", top: "clamp(0px, 39.5%, 190px)", right: "14.5%" },
   },
   {
     // title: "Title 2",
-    image: audi,
+    image: publicImage("audi.png"),
     name: { top: "Audi", bottom: "A3" },
-    tyre: audiTyre,
+    tyre: publicImage("audi-tyre.png"),
     cord: { left: "13.9%", top: "clamp(0px, 42.2%, 203px)", right: "10.4%" },
   },
 
   {
-    image: bmw,
+    image: publicImage("bmw.png"),
     name: { top: "BMW", bottom: "M5 CS" },
-    tyre: bmwTyre,
+    tyre: publicImage("bmw-tyre.png"),
     cord: {
       left: "4.2%",
       top: "calc(clamp(0px, 33%, 150px) + clamp(0px, 10%, 100px)",
@@ -51,9 +52,9 @@ const sections = [
     },
   },
   {
-    image: mercedes,
+    image: publicImage("mercedes.png"),
     name: { top: "Mercedes", bottom: "GT 63 S" },
-    tyre: mercedesTyre,
+    tyre: publicImage("mercedes-tyre.png"),
     cord: {
       left: "-6.7%",
       top: "calc(clamp(0px, 45%, 155px) + clamp(-36px, calc( 51% - 200px), 40px ))",
@@ -69,9 +70,9 @@ const sections = [
     },
   },
   {
-    image: lexus,
+    image: publicImage("lexus.png"),
     name: { top: "Lexus", bottom: "LC Series" },
-    tyre: lexusTyre,
+    tyre: publicImage("lexus-tyre.png"),
     cord: {
       left: "13%",
       top: "clamp(0px, 35%, 170px)",
@@ -444,10 +445,14 @@ const GalleryImage = ({ item, idx, x, windowWidth }) => {
       // }}
     >
       <div>
-        <img src={item.image} alt={item.title} style={{ ...item.style }} />
+        <img
+          src={item.image}
+          alt={item.title || "car image"}
+          style={{ ...item.style }}
+        />
         <animated.img
           src={item.tyre}
-          alt={item.title || "car image"}
+          alt={item.title || "car tyre"}
           className="tyre"
           style={{
             left: item.cord.left,
@@ -458,7 +463,7 @@ const GalleryImage = ({ item, idx, x, windowWidth }) => {
         />
         <animated.img
           src={item.tyre}
-          alt={item.title || "car image"}
+          alt={item.title || "car tyre"}
           className="tyre right"
           style={{
             right: item.cord.right,
