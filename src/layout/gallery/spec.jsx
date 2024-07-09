@@ -2,10 +2,6 @@ import { useEffect, useState } from "react";
 import "./spec.scss";
 import { animated, to, useSpring } from "@react-spring/web";
 import { customEasing } from "../header/header";
-// import image1 from "../../assets/views/image01.png";
-// import image2 from "../../assets/views/image02.png";
-// import image3 from "../../assets/views/image03.png";
-// import image4 from "../../assets/views/image04.png";
 import { colors } from "../gallery/index";
 import { ReactComponent as Fuel } from "../../assets/icons/fuel.svg";
 import { ReactComponent as Seat } from "../../assets/icons/seat.svg";
@@ -13,10 +9,10 @@ import { ReactComponent as Engine } from "../../assets/icons/engine.svg";
 import { publicViewImage } from "../../utils";
 
 const viewSrc = [
-  publicViewImage("image01.png"),
-  publicViewImage("image02.png"),
-  publicViewImage("image03.png"),
-  publicViewImage("image04.png"),
+  publicViewImage("image01.webp"),
+  publicViewImage("image02.webp"),
+  publicViewImage("image03.webp"),
+  publicViewImage("image04.webp"),
 ];
 const specs = [
   {

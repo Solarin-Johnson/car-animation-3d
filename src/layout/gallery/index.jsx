@@ -4,40 +4,30 @@ import { useSpring, animated, easings, to } from "@react-spring/web";
 import BezierEasing from "bezier-easing";
 import { useDrag } from "@use-gesture/react";
 import Button from "../../components/buttons";
-// import ford from "../../assets/ford.png";
-// import audi from "../../assets/audi.png";
-// import lexus from "../../assets/lexus.png";
-// import bmw from "../../assets/bmw.png";
-// import mercedes from "../../assets/mercedes.png";
 
-// import fordTyre from "../../assets/ford-tyre.png";
-// import audiTyre from "../../assets/audi-tyre.png";
-// import lexusTyre from "../../assets/lexus-tyre.png";
-// import bmwTyre from "../../assets/bmw-tyre.png";
-// import mercedesTyre from "../../assets/mercedes-tyre.png";
 import { BottomView, RightView } from "./spec";
 import { publicImage } from "../../utils";
 
 const sections = [
   {
     // title: "Title 1",
-    image: publicImage("ford.png"),
+    image: publicImage("ford.webp"),
     name: { top: "Ford", bottom: "Mustang" },
-    tyre: publicImage("ford-tyre.png"),
+    tyre: publicImage("ford-tyre.webp"),
     cord: { left: "12.7%", top: "clamp(0px, 39.5%, 190px)", right: "14.5%" },
   },
   {
     // title: "Title 2",
-    image: publicImage("audi.png"),
+    image: publicImage("audi.webp"),
     name: { top: "Audi", bottom: "A3" },
-    tyre: publicImage("audi-tyre.png"),
+    tyre: publicImage("audi-tyre.webp"),
     cord: { left: "13.9%", top: "clamp(0px, 42.2%, 203px)", right: "10.4%" },
   },
 
   {
-    image: publicImage("bmw.png"),
+    image: publicImage("bmw.webp"),
     name: { top: "BMW", bottom: "M5 CS" },
-    tyre: publicImage("bmw-tyre.png"),
+    tyre: publicImage("bmw-tyre.webp"),
     cord: {
       left: "4.2%",
       top: "calc(clamp(0px, 33%, 150px) + clamp(0px, 10%, 100px)",
@@ -52,9 +42,9 @@ const sections = [
     },
   },
   {
-    image: publicImage("mercedes.png"),
+    image: publicImage("mercedes.webp"),
     name: { top: "Mercedes", bottom: "GT 63 S" },
-    tyre: publicImage("mercedes-tyre.png"),
+    tyre: publicImage("mercedes-tyre.webp"),
     cord: {
       left: "-6.7%",
       top: "calc(clamp(0px, 45%, 155px) + clamp(-36px, calc( 51% - 200px), 40px ))",
@@ -70,9 +60,9 @@ const sections = [
     },
   },
   {
-    image: publicImage("lexus.png"),
+    image: publicImage("lexus.webp"),
     name: { top: "Lexus", bottom: "LC Series" },
-    tyre: publicImage("lexus-tyre.png"),
+    tyre: publicImage("lexus-tyre.webp"),
     cord: {
       left: "13%",
       top: "clamp(0px, 35%, 170px)",
