@@ -34,7 +34,7 @@ export default function Header({ details }) {
       }}
     >
       <div className="logo">
-        <img src={logo} alt="logo" />
+        <img src={logo} alt="logo" width="80" height="18" />
       </div>
       <div className="menu">
         <span>Home</span>
@@ -44,7 +44,12 @@ export default function Header({ details }) {
       </div>
       <div className="profile">
         <div className="avatar">
-          <img src="https://i.pravatar.cc/150?img=42" alt="avatar" />
+          <img
+            src="https://i.pravatar.cc/150?img=42"
+            alt="avatar"
+            width="35"
+            height="35"
+          />
         </div>
         <span>My Account</span>
       </div>
